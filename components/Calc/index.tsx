@@ -1,6 +1,6 @@
 "use client";
 import React, { useState } from "react";
-import s from "./calc.module.css";
+import s from "./Calc.module.css";
 
 // Definimos los tipos
 interface Person {

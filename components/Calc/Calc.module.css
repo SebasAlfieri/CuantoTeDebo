@@ -1,0 +1,51 @@
+.container {
+  padding: 20px;
+  max-width: 600px;
+  margin: 0 auto;
+  font-family: Arial, sans-serif;
+
+  h1,
+  h2 {
+    color: #333;
+  }
+
+  .form {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 20px;
+  }
+
+  input {
+    padding: 10px;
+    border: 1px solid #ccc;
+    border-radius: 5px;
+    flex: 1;
+  }
+
+  button {
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+  }
+
+  button:hover {
+    background-color: #0056b3;
+  }
+
+  .list,
+  .results {
+    margin-top: 20px;
+  }
+
+  .person,
+  .debt {
+    background: #f9f9f9;
+    padding: 10px;
+    margin-bottom: 5px;
+    border: 1px solid #eee;
+    border-radius: 5px;
+  }
+}
