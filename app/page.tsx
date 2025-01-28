@@ -3,7 +3,7 @@ import { Calc } from "@/components";
 
 export default function Home() {
   return (
-    <div className={s.page}>
+    <div className={s.container}>
       <Calc />
     </div>
   );

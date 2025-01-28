@@ -1,0 +1,15 @@
+.container {
+  position: fixed;
+  bottom: 0;
+  background-color: var(--green);
+  width: 100%;
+  left: 0;
+  font-family: var(--roboto);
+  color: white;
+  font-weight: bold;
+  text-align: center;
+  height: 30px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}

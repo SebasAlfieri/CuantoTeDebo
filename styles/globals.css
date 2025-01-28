@@ -1,0 +1,30 @@
+:root {
+  --thistle1: #ddc4dd;
+  --thistle2: #dccfec;
+  --indigo: #a997df;
+  --violet: #4f517d;
+  --violet-blue: #314cb6;
+
+  --white: #ffffff;
+  --blue: #5865f2;
+  --green: #23a55a;
+  --red: #da373c;
+  --black: #1e1f22;
+  --dark: #313338;
+  --gray: #404249;
+  --light-gray: #80848e;
+  --ultra-light-gray: #b5bac1;
+}
+
+html {
+  background-color: var(--dark);
+  padding: 0;
+  margin: 0;
+  color: white;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
