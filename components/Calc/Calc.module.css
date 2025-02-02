@@ -19,7 +19,6 @@
   }
 
   &__flex {
-    /* padding: 20px 20px; */
     padding: 0;
     margin: 0;
 
@@ -100,13 +99,9 @@
         & span {
           color: black;
         }
-        /* & p {
-      } */
       }
 
       &__delete {
-        /* background-color: var(--red); */
-
         background-color: transparent;
         border: none;
         border-radius: 50%;
@@ -160,13 +155,6 @@
           }
         }
       }
-      /* &__total {
-        background-color: white;
-      }
-
-      &__divided {
-        background-color: white;
-      } */
     }
   }
 }

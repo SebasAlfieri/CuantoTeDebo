@@ -5,7 +5,6 @@ import { motion, AnimatePresence } from "framer-motion";
 import { ReactSVG } from "react-svg";
 import cs from "classnames";
 
-// Definimos los tipos
 interface Person {
   name: string;
   amount: number;
@@ -21,7 +20,6 @@ const Calc: React.FC = () => {
   const [usedColors, setUsedColors] = useState<string[]>([]);
   const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(true);
 
-  // Lista de colores simples predefinidos
   const colors = [
     "#820B8A",
     "#9370DB",
@@ -40,7 +38,6 @@ const Calc: React.FC = () => {
     [(s.container__flex__form__button, s.disable)]: isSubmitDisabled,
   });
 
-  // Cargar datos desde localStorage al iniciar
   useEffect(() => {
     const storedPeople = localStorage.getItem(LOCAL_STORAGE_KEY);
     if (storedPeople) {
@@ -48,12 +45,16 @@ const Calc: React.FC = () => {
     }
   }, []);
 
-  // Guardar datos en localStorage cada vez que cambia `people`
+  useEffect(() => {
+    if (people.length > 0) {
+      localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(people));
+    }
+  }, [people]);
+
   useEffect(() => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(people));
   }, [people]);
 
-  // Validar si el formulario está listo para enviar
   useEffect(() => {
     if (name && amount && !isNaN(Number(amount))) {
       setIsSubmitDisabled(false);
@@ -63,47 +64,40 @@ const Calc: React.FC = () => {
   }, [name, amount]);
 
   const formatNumber = (num: number): string => {
-    const fix = Number.isInteger(num) ? 0 : 2; // Si es entero, no tiene decimales, si no, tendrá 2 decimales
+    const fix = Number.isInteger(num) ? 0 : 2;
     const [integerPart, decimalPart] = num.toFixed(fix).split(".");
 
-    // Agregar el punto como separador de miles
     const formattedIntegerPart = integerPart
       .split("")
       .reduceRight((acc, num, i, orig) => {
         if ("-" === num && 0 === i) {
-          return num + acc; // Mantener el signo negativo si es necesario
+          return num + acc;
         }
         const pos = orig.length - i - 1;
         return num + (pos && !(pos % 3) ? "." : "") + acc;
       }, "");
 
-    // Si hay decimales, reemplazamos el punto por la coma y agregamos al final
     return decimalPart
       ? `${formattedIntegerPart},${decimalPart}`
       : formattedIntegerPart;
   };
 
-  // Genera un color no repetido hasta que se usen todos los colores
   const getRandomColor = (): string => {
     let availableColors = colors.filter((color) => !usedColors.includes(color));
 
-    // Si todos los colores ya se usaron, reinicia la lista de colores usados
     if (availableColors.length === 0) {
       setUsedColors([]);
       availableColors = colors;
     }
 
-    // Selecciona un color aleatorio de los disponibles
     const color =
       availableColors[Math.floor(Math.random() * availableColors.length)];
 
-    // Actualiza la lista de colores usados
     setUsedColors((prev) => [...prev, color]);
 
     return color;
   };
 
-  // Agregar una persona al estado
   const addPerson = (): void => {
     if (name && amount) {
       setPeople([
@@ -115,12 +109,10 @@ const Calc: React.FC = () => {
     }
   };
 
-  // Eliminar una persona del estado
   const removePerson = (index: number): void => {
     setPeople(people.filter((_, i) => i !== index));
   };
 
-  // Optimización de transacciones
   const calculateOptimizedTransactions = (): {
     transactions: { debtor: Person; creditor: Person; amount: number }[];
     totalPerPerson: number;
@@ -227,7 +219,7 @@ const Calc: React.FC = () => {
           <AnimatePresence>
             {people.map((person, index) => (
               <motion.div
-                key={index}
+                key={`person-${person.name}${index}`}
                 className={s.container__flex__list__person}
                 style={{ color: person.color }}
                 initial={{ opacity: 0 }}
@@ -265,7 +257,10 @@ const Calc: React.FC = () => {
             <div className={s.container__flex__results}>
               <h2>💲 Deudas 💲</h2>
               {transactions.map((transaction, index) => (
-                <div key={index} className={s.container__flex__results__debt}>
+                <div
+                  key={`transaction-${transaction.debtor.name}${index}`}
+                  className={s.container__flex__results__debt}
+                >
                   <b style={{ color: transaction.debtor.color }}>
                     {transaction.debtor.name}
                   </b>{" "}
