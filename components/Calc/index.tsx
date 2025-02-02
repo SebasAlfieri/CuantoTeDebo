@@ -1,5 +1,5 @@
 "use client";
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import s from "./Calc.module.css";
 import { motion, AnimatePresence } from "framer-motion";
 import { ReactSVG } from "react-svg";
@@ -11,6 +11,8 @@ interface Person {
   color: string;
 }
 
+const LOCAL_STORAGE_KEY = "splitPayments";
+
 const Calc: React.FC = () => {
   const [people, setPeople] = useState<Person[]>([]);
   const [name, setName] = useState<string>("");
@@ -19,18 +21,42 @@ const Calc: React.FC = () => {
 
   // Lista de colores simples predefinidos
   const colors = [
-    "#FFB6C1",
-    "#87CEEB",
-    "#7dd67d",
-    "#FFD700",
-    "#FFA07A",
-    "#9370DB",
-    "#3cfae7",
-    "#FF4500",
-    "#849324",
-    "#FFB30F",
     "#820B8A",
+    "#9370DB",
+    "#188afc",
+    "#70c9ec",
+    "#3cfae7",
+    "#7dd67d",
+    "#849324",
+    "#f9de47",
+    "#FFB30F",
+    "#FFB6C1",
+    "#FF4500",
   ];
+
+  // Cargar datos desde localStorage al iniciar
+  useEffect(() => {
+    const storedPeople = localStorage.getItem(LOCAL_STORAGE_KEY);
+    if (storedPeople) {
+      setPeople(JSON.parse(storedPeople));
+    }
+  }, []);
+
+  // Guardar datos en localStorage cada vez que cambia `people`
+  useEffect(() => {
+    localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(people));
+  }, [people]);
+
+  const formatNumber = (num: number): string => {
+    if (Number.isInteger(num)) {
+      return num.toLocaleString("es-ES");
+    } else {
+      return num.toLocaleString("es-ES", {
+        minimumFractionDigits: 2,
+        maximumFractionDigits: 2,
+      });
+    }
+  };
 
   // Genera un color no repetido hasta que se usen todos los colores
   const getRandomColor = (): string => {
@@ -136,7 +162,13 @@ const Calc: React.FC = () => {
               value={name}
               onChange={(e) => setName(e.target.value)}
               maxLength={12}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  addPerson();
+                }
+              }}
             />
+
             <input
               type="number"
               placeholder="Monto gastado"
@@ -145,6 +177,11 @@ const Calc: React.FC = () => {
                 const value = e.target.value;
                 if (value.length <= 7) {
                   setAmount(value);
+                }
+              }}
+              onKeyDown={(e) => {
+                if (e.key === "Enter") {
+                  addPerson();
                 }
               }}
             />
@@ -177,7 +214,8 @@ const Calc: React.FC = () => {
                 }}
               >
                 <p>
-                  <b>{person.name}:</b> ${person.amount.toFixed(2)}
+                  <b>{person.name}:</b>{" "}
+                  <span>${formatNumber(person.amount)}</span>
                 </p>
                 <button
                   className={s.container__flex__list__delete}
@@ -195,14 +233,6 @@ const Calc: React.FC = () => {
         </div>
         {people.length > 1 && (
           <>
-            <div className={s.summary}>
-              <h2>Resumen</h2>
-              <p>
-                Total gastado por todos: $
-                {people.reduce((sum, p) => sum + p.amount, 0).toFixed(2)}
-              </p>
-              <p>Cada uno debería gastar: ${totalPerPerson.toFixed(2)}</p>
-            </div>
             <div className={s.container__flex__results}>
               <h2>Deudas (Transacciones Óptimas)</h2>
               {transactions.map((transaction, index) => (
@@ -212,7 +242,7 @@ const Calc: React.FC = () => {
                   </b>{" "}
                   debe pagar{" "}
                   <span style={{ fontWeight: "bold" }}>
-                    ${transaction.amount.toFixed(2)}
+                    ${formatNumber(transaction.amount)}
                   </span>{" "}
                   a{" "}
                   <b style={{ color: transaction.creditor.color }}>
@@ -220,6 +250,14 @@ const Calc: React.FC = () => {
                   </b>
                 </div>
               ))}
+            </div>{" "}
+            <div className={s.summary}>
+              <h2>Resumen</h2>
+              <p>
+                Total gastado por todos: $
+                {formatNumber(people.reduce((sum, p) => sum + p.amount, 0))}
+              </p>
+              <p>Cada uno debería gastar: ${formatNumber(totalPerPerson)}</p>
             </div>
           </>
         )}

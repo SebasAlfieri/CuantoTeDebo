@@ -31,6 +31,16 @@
         justify-content: space-between;
         gap: 10px;
 
+        input[type="number"]::-webkit-outer-spin-button,
+        input[type="number"]::-webkit-inner-spin-button {
+          -webkit-appearance: none;
+          margin: 0;
+        }
+
+        input[type="number"] {
+          -moz-appearance: textfield;
+        }
+
         & input {
           background-color: var(--black);
           color: white;
@@ -83,17 +93,22 @@
         border: 1px solid #eee;
         border-radius: 5px;
 
+        & span {
+          color: black;
+        }
         /* & p {
       } */
       }
 
       &__delete {
         /* background-color: var(--red); */
+
         background-color: transparent;
         border: none;
         border-radius: 50%;
 
         &__icon {
+          cursor: pointer;
           width: 30px;
           height: 30px;
           & svg {
