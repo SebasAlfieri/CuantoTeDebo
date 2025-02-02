@@ -5,10 +5,13 @@
   font-family: var(--roboto);
   padding: 20px 0 70px;
 
+  & h2 {
+    text-align: center;
+  }
   &__title {
     font-family: var(--bebas);
     font-size: 40px;
-    color: var(--blue);
+    color: var(--green);
     width: 100%;
     text-align: center;
     margin: 0;
@@ -71,6 +74,7 @@
         border: none;
         border-radius: 5px;
         cursor: pointer;
+        transition: 0.3s;
 
         @media (hover: hover) {
           &:hover {
@@ -81,7 +85,7 @@
     }
 
     &__list {
-      margin-top: 20px;
+      margin: 20px 0;
 
       &__person {
         display: flex;
@@ -121,7 +125,7 @@
     }
 
     &__results {
-      margin-top: 20px;
+      margin: 20px 0;
 
       &__debt {
         background: #f9f9f9;
@@ -133,7 +137,40 @@
       }
     }
 
-    /* &__summary {
-    } */
+    &__summary {
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      & div {
+        background-color: white;
+        color: black;
+        border-radius: 5px;
+        display: flex;
+        flex-direction: column;
+        justify-content: center;
+        align-items: center;
+
+        & p {
+          line-height: 1;
+          text-align: center;
+
+          & span {
+            font-size: 23px !important;
+            line-height: 1.5;
+          }
+        }
+      }
+      /* &__total {
+        background-color: white;
+      }
+
+      &__divided {
+        background-color: white;
+      } */
+    }
   }
+}
+
+.disable {
+  opacity: 0.2;
 }

@@ -3,6 +3,7 @@ import React, { useState, useEffect } from "react";
 import s from "./Calc.module.css";
 import { motion, AnimatePresence } from "framer-motion";
 import { ReactSVG } from "react-svg";
+import cs from "classnames";
 
 // Definimos los tipos
 interface Person {
@@ -18,6 +19,7 @@ const Calc: React.FC = () => {
   const [name, setName] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
   const [usedColors, setUsedColors] = useState<string[]>([]);
+  const [isSubmitDisabled, setIsSubmitDisabled] = useState<boolean>(true);
 
   // Lista de colores simples predefinidos
   const colors = [
@@ -34,6 +36,10 @@ const Calc: React.FC = () => {
     "#FF4500",
   ];
 
+  const submitDisable = cs(s.container__flex__form__button, {
+    [(s.container__flex__form__button, s.disable)]: isSubmitDisabled,
+  });
+
   // Cargar datos desde localStorage al iniciar
   useEffect(() => {
     const storedPeople = localStorage.getItem(LOCAL_STORAGE_KEY);
@@ -47,15 +53,34 @@ const Calc: React.FC = () => {
     localStorage.setItem(LOCAL_STORAGE_KEY, JSON.stringify(people));
   }, [people]);
 
-  const formatNumber = (num: number): string => {
-    if (Number.isInteger(num)) {
-      return num.toLocaleString("es-ES");
+  // Validar si el formulario está listo para enviar
+  useEffect(() => {
+    if (name && amount && !isNaN(Number(amount))) {
+      setIsSubmitDisabled(false);
     } else {
-      return num.toLocaleString("es-ES", {
-        minimumFractionDigits: 2,
-        maximumFractionDigits: 2,
-      });
+      setIsSubmitDisabled(true);
     }
+  }, [name, amount]);
+
+  const formatNumber = (num: number): string => {
+    const fix = Number.isInteger(num) ? 0 : 2; // Si es entero, no tiene decimales, si no, tendrá 2 decimales
+    const [integerPart, decimalPart] = num.toFixed(fix).split(".");
+
+    // Agregar el punto como separador de miles
+    const formattedIntegerPart = integerPart
+      .split("")
+      .reduceRight((acc, num, i, orig) => {
+        if ("-" === num && 0 === i) {
+          return num + acc; // Mantener el signo negativo si es necesario
+        }
+        const pos = orig.length - i - 1;
+        return num + (pos && !(pos % 3) ? "." : "") + acc;
+      }, "");
+
+    // Si hay decimales, reemplazamos el punto por la coma y agregamos al final
+    return decimalPart
+      ? `${formattedIntegerPart},${decimalPart}`
+      : formattedIntegerPart;
   };
 
   // Genera un color no repetido hasta que se usen todos los colores
@@ -189,13 +214,16 @@ const Calc: React.FC = () => {
 
           <button
             onClick={addPerson}
-            className={s.container__flex__form__button}
+            className={submitDisable}
+            disabled={isSubmitDisabled}
           >
             Agregar Persona
           </button>
         </div>
         <div className={s.container__flex__list}>
-          <h2>Personas</h2>{" "}
+          <motion.h2>
+            {people.length >= 2 ? "Personas" : "Agrega al menos 2 personas"}
+          </motion.h2>
           <AnimatePresence>
             {people.map((person, index) => (
               <motion.div
@@ -220,6 +248,7 @@ const Calc: React.FC = () => {
                 <button
                   className={s.container__flex__list__delete}
                   onClick={() => removePerson(index)}
+                  aria-label="Delete"
                 >
                   <ReactSVG
                     src="/icons/close.svg"
@@ -228,13 +257,13 @@ const Calc: React.FC = () => {
                   />
                 </button>
               </motion.div>
-            ))}{" "}
+            ))}
           </AnimatePresence>
         </div>
         {people.length > 1 && (
           <>
             <div className={s.container__flex__results}>
-              <h2>Deudas (Transacciones Óptimas)</h2>
+              <h2>💲 Deudas 💲</h2>
               {transactions.map((transaction, index) => (
                 <div key={index} className={s.container__flex__results__debt}>
                   <b style={{ color: transaction.debtor.color }}>
@@ -251,13 +280,25 @@ const Calc: React.FC = () => {
                 </div>
               ))}
             </div>{" "}
-            <div className={s.summary}>
-              <h2>Resumen</h2>
-              <p>
-                Total gastado por todos: $
-                {formatNumber(people.reduce((sum, p) => sum + p.amount, 0))}
-              </p>
-              <p>Cada uno debería gastar: ${formatNumber(totalPerPerson)}</p>
+            <div className={s.container__flex__summary}>
+              <h2>📈 Resumen 📈</h2>
+              <div className={s.container__flex__summary__total}>
+                <p>
+                  Total gastado por todos:
+                  <br />
+                  <span>
+                    $
+                    {formatNumber(people.reduce((sum, p) => sum + p.amount, 0))}
+                  </span>
+                </p>
+              </div>
+              <div className={s.container__flex__summary__divided}>
+                <p>
+                  Cada uno estaria gastando:
+                  <br />
+                  <span>${formatNumber(totalPerPerson)}</span>
+                </p>
+              </div>
             </div>
           </>
         )}
