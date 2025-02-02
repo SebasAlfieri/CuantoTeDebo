@@ -231,7 +231,7 @@ const Calc: React.FC = () => {
           }}
         >
           <div className={s.container__flex__list__title}>
-            {people.length <= 1 && (
+            {people.length >= 2 && (
               <motion.h2
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1, transition: { duration: 1 } }}
@@ -240,7 +240,7 @@ const Calc: React.FC = () => {
                 Personas
               </motion.h2>
             )}
-            {people.length >= 2 && (
+            {people.length <= 1 && (
               <motion.h2
                 initial={{ opacity: 0 }}
                 animate={{ opacity: [0.3, 1] }}
