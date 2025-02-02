@@ -6,6 +6,7 @@ import { ReactSVG } from "react-svg";
 import cs from "classnames";
 
 interface Person {
+  key: string;
   name: string;
   amount: number;
   color: string;
@@ -100,9 +101,15 @@ const Calc: React.FC = () => {
 
   const addPerson = (): void => {
     if (name && amount) {
+      const uniqueKey = `${name}-${new Date().getTime()}-${Math.random()}`;
       setPeople([
         ...people,
-        { name, amount: parseFloat(amount), color: getRandomColor() },
+        {
+          key: uniqueKey,
+          name,
+          amount: parseFloat(amount),
+          color: getRandomColor(),
+        },
       ]);
       setName("");
       setAmount("");
@@ -212,16 +219,50 @@ const Calc: React.FC = () => {
             Agregar Persona
           </button>
         </div>
-        <div className={s.container__flex__list}>
-          <motion.h2>
-            {people.length >= 2 ? "Personas" : "Agrega al menos 2 personas"}
-          </motion.h2>
+        <motion.div
+          className={s.container__flex__list}
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{
+            opacity: 0,
+            transition: {
+              opacity: { duration: 0.3 },
+            },
+          }}
+        >
+          <div className={s.container__flex__list__title}>
+            {people.length <= 1 && (
+              <motion.h2
+                initial={{ opacity: 0 }}
+                animate={{ opacity: 1, transition: { duration: 1 } }}
+                exit={{}}
+              >
+                Personas
+              </motion.h2>
+            )}
+            {people.length >= 2 && (
+              <motion.h2
+                initial={{ opacity: 0 }}
+                animate={{ opacity: [0.3, 1] }}
+                transition={{
+                  repeat: Infinity,
+                  duration: 1,
+                  type: "easeInOut",
+                  repeatType: "reverse",
+                }}
+              >
+                Agrega al menos 2 personas
+              </motion.h2>
+            )}
+          </div>
+
           <AnimatePresence>
             {people.map((person, index) => (
               <motion.div
-                key={`person-${person.name}${index}`}
+                key={person.key}
                 className={s.container__flex__list__person}
                 style={{ color: person.color }}
+                layout
                 initial={{ opacity: 0 }}
                 animate={{ opacity: 1 }}
                 exit={{
@@ -229,7 +270,7 @@ const Calc: React.FC = () => {
                   opacity: 0,
                   transition: {
                     opacity: { duration: 0.3 },
-                    x: { type: "spring", duration: 1 },
+                    x: { type: "spring", duration: 0.5 },
                   },
                 }}
               >
@@ -251,52 +292,79 @@ const Calc: React.FC = () => {
               </motion.div>
             ))}
           </AnimatePresence>
-        </div>
-        {people.length > 1 && (
-          <>
-            <div className={s.container__flex__results}>
-              <h2>💲 Deudas 💲</h2>
-              {transactions.map((transaction, index) => (
-                <div
-                  key={`transaction-${transaction.debtor.name}${index}`}
-                  className={s.container__flex__results__debt}
-                >
-                  <b style={{ color: transaction.debtor.color }}>
-                    {transaction.debtor.name}
-                  </b>{" "}
-                  debe pagar{" "}
-                  <span style={{ fontWeight: "bold" }}>
-                    ${formatNumber(transaction.amount)}
-                  </span>{" "}
-                  a{" "}
-                  <b style={{ color: transaction.creditor.color }}>
-                    {transaction.creditor.name}
-                  </b>
+        </motion.div>
+        <AnimatePresence>
+          {people.length > 1 && (
+            <motion.div
+              initial={{ opacity: 0 }}
+              animate={{ opacity: 1 }}
+              exit={{
+                opacity: 0,
+                transition: {
+                  opacity: { duration: 0.3 },
+                },
+              }}
+            >
+              <motion.div className={s.container__flex__results}>
+                <h2>💲 Deudas 💲</h2>
+                <AnimatePresence>
+                  {transactions.map((transaction, index) => (
+                    <motion.div
+                      key={`transaction-${transaction.debtor.name}${index}`}
+                      className={s.container__flex__results__debt}
+                      layout
+                      initial={{ opacity: 0 }}
+                      animate={{ opacity: 1 }}
+                      exit={{
+                        x: [10, 20, 0, -20],
+                        opacity: 0,
+                        transition: {
+                          delay: 0.5,
+                          opacity: { duration: 0.3 },
+                          x: { type: "spring", duration: 0.5 },
+                        },
+                      }}
+                    >
+                      <b style={{ color: transaction.debtor.color }}>
+                        {transaction.debtor.name}
+                      </b>{" "}
+                      debe pagar{" "}
+                      <span style={{ fontWeight: "bold" }}>
+                        ${formatNumber(transaction.amount)}
+                      </span>{" "}
+                      a{" "}
+                      <b style={{ color: transaction.creditor.color }}>
+                        {transaction.creditor.name}
+                      </b>
+                    </motion.div>
+                  ))}
+                </AnimatePresence>
+              </motion.div>{" "}
+              <div className={s.container__flex__summary}>
+                <h2>📈 Resumen 📈</h2>
+                <div className={s.container__flex__summary__total}>
+                  <p>
+                    Total gastado por todos:
+                    <br />
+                    <span>
+                      $
+                      {formatNumber(
+                        people.reduce((sum, p) => sum + p.amount, 0)
+                      )}
+                    </span>
+                  </p>
                 </div>
-              ))}
-            </div>{" "}
-            <div className={s.container__flex__summary}>
-              <h2>📈 Resumen 📈</h2>
-              <div className={s.container__flex__summary__total}>
-                <p>
-                  Total gastado por todos:
-                  <br />
-                  <span>
-                    $
-                    {formatNumber(people.reduce((sum, p) => sum + p.amount, 0))}
-                  </span>
-                </p>
+                <div className={s.container__flex__summary__divided}>
+                  <p>
+                    Cada uno estaria gastando:
+                    <br />
+                    <span>${formatNumber(totalPerPerson)}</span>
+                  </p>
+                </div>
               </div>
-              <div className={s.container__flex__summary__divided}>
-                <p>
-                  Cada uno estaria gastando:
-                  <br />
-                  <span>${formatNumber(totalPerPerson)}</span>
-                </p>
-              </div>
-            </div>
-          </>
-        )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
     </div>
   );

@@ -86,6 +86,15 @@
     &__list {
       margin: 20px 0;
 
+      &__title {
+        height: 50px;
+        & h2 {
+          & span {
+            display: inline-block;
+          }
+        }
+      }
+
       &__person {
         display: flex;
         justify-content: space-between;
