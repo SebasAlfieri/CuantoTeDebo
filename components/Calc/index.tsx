@@ -234,8 +234,7 @@ const Calc: React.FC = () => {
             {people.length >= 2 && (
               <motion.h2
                 initial={{ opacity: 0 }}
-                animate={{ opacity: 1, transition: { duration: 1 } }}
-                exit={{}}
+                animate={{ opacity: 1, transition: { duration: 0.4 } }}
               >
                 Personas
               </motion.h2>
@@ -270,7 +269,7 @@ const Calc: React.FC = () => {
                   opacity: 0,
                   transition: {
                     opacity: { duration: 0.3 },
-                    x: { type: "spring", duration: 0.5 },
+                    x: { type: "spring", duration: 0.3 },
                   },
                 }}
               >
