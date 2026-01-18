@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Roboto, Bebas_Neue } from "next/font/google";
 import "@/styles/globals.css";
+import { Analytics } from "@vercel/analytics/next";
 import { Footer } from "@/components";
 
 export const metadata: Metadata = {
@@ -74,7 +75,8 @@ export default function RootLayout({
   return (
     <html lang="en">
       <body className={`${roboto.variable} ${bebas.variable}`}>
-        {children} <Footer />
+        {children} <Analytics />
+        <Footer />
       </body>
     </html>
   );
