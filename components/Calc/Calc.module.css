@@ -1,5 +1,5 @@
 .container {
-  max-width: 400px;
+  max-width: 420px;
   margin: 0;
   font-family: Arial, sans-serif;
   font-family: var(--roboto);
@@ -25,6 +25,7 @@
     &__form {
       display: flex;
       flex-direction: column;
+
       gap: 10px;
       margin-bottom: 20px;
 
@@ -85,6 +86,7 @@
 
     &__list {
       margin: 20px 0;
+      padding: 0 10px;
 
       &__title {
         height: 50px;
@@ -129,7 +131,11 @@
     }
 
     &__results {
-      margin: 20px 0;
+      & h2 {
+        padding: 0;
+        margin: 0;
+        margin-bottom: 20px;
+      }
 
       &__debt {
         background: #f9f9f9;
@@ -170,4 +176,45 @@
 
 .disable {
   opacity: 0.2;
+}
+
+.screenshot {
+  position: relative;
+  padding: 10px 10px;
+  background-color: var(--dark);
+  /* border-radius: 15px; */
+  /* &::before {
+    content: "";
+    position: absolute;
+    width: 105%;
+    height: 105%;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    background-color: var(--dark);
+    border-radius: 15px;
+    z-index: -1;
+  } */
+}
+
+.shareContainer {
+  padding: 0 10px;
+  & button {
+    width: 100%;
+    padding: 10px 20px;
+    background-color: #007bff;
+    color: white;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: 0.3s;
+    margin: auto auto;
+    margin-top: 20px;
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: #0056b3;
+      }
+    }
+  }
 }

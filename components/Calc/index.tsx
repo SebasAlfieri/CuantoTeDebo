@@ -4,6 +4,10 @@ import s from "./Calc.module.css";
 import { motion, AnimatePresence } from "framer-motion";
 import { ReactSVG } from "react-svg";
 import cs from "classnames";
+import * as domtoimage from "html-to-image";
+import { saveAs } from "file-saver";
+import html2canvas from "html2canvas";
+import useIsMobile from "@/hooks/use-is-mobile";
 
 interface Person {
   key: string;
@@ -15,6 +19,7 @@ interface Person {
 const LOCAL_STORAGE_KEY = "splitPayments";
 
 const Calc: React.FC = () => {
+  const isMobile = useIsMobile();
   const [people, setPeople] = useState<Person[]>([]);
   const [name, setName] = useState<string>("");
   const [amount, setAmount] = useState<string>("");
@@ -142,7 +147,7 @@ const Calc: React.FC = () => {
 
     const minimizeTransactions = (
       creditors: typeof balances,
-      debtors: typeof balances
+      debtors: typeof balances,
     ) => {
       let i = 0;
       let j = 0;
@@ -172,6 +177,97 @@ const Calc: React.FC = () => {
   };
 
   const { transactions, totalPerPerson } = calculateOptimizedTransactions();
+
+  //screenshot
+
+  const [, setImg] = useState("");
+  // Ejecuta varias veces al inicio para evitar bugs de html-to-image con Safari Mac
+  useEffect(() => {
+    if (!isMobile) {
+      const imagen = document.getElementById("screenshot")!;
+      let count = 0;
+
+      const interval = setInterval(() => {
+        domtoimage
+          .toPng(imagen, {
+            pixelRatio: 2,
+          })
+          .then(function (dataUrl) {
+            setImg(dataUrl);
+            count++;
+          });
+        if (count === 3) {
+          clearInterval(interval);
+        }
+      }, 1000);
+
+      return () => clearInterval(interval);
+    }
+  }, [isMobile]);
+
+  // Download lineup
+  const handleClickDownload = () => {
+    const element = document.getElementById("screenshot");
+    if (element) {
+      // if safari or IOS use html2canvas to convert the element to an image
+      if (isMobile) {
+        html2canvas(element).then(function (canvas) {
+          // Convertir el canvas a un blob
+          canvas.toBlob(async function (blob) {
+            if (blob === null) {
+              console.error("No se pudo crear el Blob");
+              return;
+            }
+
+            // Crear un archivo a partir del blob
+            const files = [
+              new File([blob], "CuantoDeben.png", {
+                type: "image/png",
+              }),
+            ];
+
+            // Comprobar si la API de navigator.share está disponible
+            if (
+              navigator.userActivation.isActive &&
+              navigator.canShare({ files })
+            ) {
+              try {
+                await navigator.share({ files });
+
+                console.log("Successful share");
+              } catch (error) {
+                // Manejar el error al compartir
+                console.error("Error sharing", error);
+              }
+            } else {
+              // Manejar el caso en el que navigator.share no está disponible
+              console.error(
+                "La API navigator.share no está disponible en este navegador.",
+              );
+
+              // const share_image = await createImageBitmap(blob);
+              const share_image_url = URL.createObjectURL(blob);
+              window.open(share_image_url, "_blank");
+            }
+          });
+        });
+      } else {
+        // use dom-to-img to convert the element to an image
+
+        domtoimage
+          .toPng(element, {
+            pixelRatio: isMobile ? 1 : 2,
+          })
+          .then(function (dataUrl) {
+            // logEvent({ eventName: '04_USER_DOWNLOAD_IMAGE' });
+            // use file-saver to save the image
+            saveAs(dataUrl, "CuantoDeben.png");
+          });
+      }
+    }
+  };
+
+  //screenshot
 
   return (
     <div className={s.container}>
@@ -258,7 +354,7 @@ const Calc: React.FC = () => {
           <AnimatePresence>
             {people.map((person, index) => (
               <motion.div
-                key={person.key}
+                key={`person-${person.key}-${index}`}
                 className={s.container__flex__list__person}
                 style={{ color: person.color }}
                 layout
@@ -297,12 +393,14 @@ const Calc: React.FC = () => {
             <motion.div
               initial={{ opacity: 0 }}
               animate={{ opacity: 1 }}
+              className={s.screenshot}
               exit={{
                 opacity: 0,
                 transition: {
                   opacity: { duration: 0.3 },
                 },
               }}
+              id="screenshot"
             >
               <motion.div className={s.container__flex__results}>
                 <h2>💲 Deudas 💲</h2>
@@ -348,7 +446,7 @@ const Calc: React.FC = () => {
                     <span>
                       $
                       {formatNumber(
-                        people.reduce((sum, p) => sum + p.amount, 0)
+                        people.reduce((sum, p) => sum + p.amount, 0),
                       )}
                     </span>
                   </p>
@@ -363,7 +461,14 @@ const Calc: React.FC = () => {
               </div>
             </motion.div>
           )}
-        </AnimatePresence>
+        </AnimatePresence>{" "}
+        {people.length > 1 && (
+          <motion.div className={s.shareContainer}>
+            <motion.button onClick={handleClickDownload}>
+              Comparte
+            </motion.button>
+          </motion.div>
+        )}
       </div>
     </div>
   );

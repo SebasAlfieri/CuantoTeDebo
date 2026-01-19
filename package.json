@@ -9,9 +9,13 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@types/file-saver": "^2.0.7",
     "@vercel/analytics": "^1.6.1",
     "classnames": "^2.5.1",
+    "file-saver": "^2.0.5",
     "framer-motion": "^12.0.6",
+    "html-to-image": "^1.11.13",
+    "html2canvas": "^1.4.1",
     "next": "^16.1.3",
     "postcss": "^8.5.1",
     "postcss-custom-media": "^11.0.5",
