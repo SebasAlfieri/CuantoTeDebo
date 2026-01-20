@@ -107,6 +107,14 @@
         border: 1px solid #eee;
         border-radius: 5px;
 
+        b {
+          text-shadow:
+            -1px -1px 0 #000,
+            1px -1px 0 #000,
+            -1px 1px 0 #000,
+            1px 1px 0 #000;
+        }
+
         & span {
           color: black;
         }
@@ -144,6 +152,14 @@
         border: 1px solid #eee;
         border-radius: 5px;
         color: var(--dark);
+
+        b {
+          text-shadow:
+            -1px -1px 0 #000,
+            1px -1px 0 #000,
+            -1px 1px 0 #000,
+            1px 1px 0 #000;
+        }
       }
     }
 
