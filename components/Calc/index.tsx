@@ -465,7 +465,7 @@ const Calc: React.FC = () => {
         {people.length > 1 && (
           <motion.div className={s.shareContainer}>
             <motion.button onClick={handleClickDownload}>
-              Comparte
+              Compartir
             </motion.button>
           </motion.div>
         )}
