@@ -183,7 +183,7 @@ const Calc: React.FC = () => {
   const [, setImg] = useState("");
   // Ejecuta varias veces al inicio para evitar bugs de html-to-image con Safari Mac
   useEffect(() => {
-    if (!isMobile) {
+    if (!isMobile && document.getElementById("screenshot")) {
       const imagen = document.getElementById("screenshot")!;
       let count = 0;
 

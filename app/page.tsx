@@ -1,13 +1,13 @@
 import s from "./page.module.css";
 import { Calc } from "@/components";
-import Image from "next/image";
+// import Image from "next/image";
 
 export default function Home() {
   return (
     <div className={s.container}>
       <Calc />
 
-      <a
+      {/* <a
         href="https://cafecito.app/cuantotedebo"
         rel="noopener"
         target="_blank"
@@ -18,7 +18,7 @@ export default function Home() {
           src={"/icons/cafecito.png"}
           alt="Cafecito App link"
         />
-      </a>
+      </a> */}
     </div>
   );
 }
