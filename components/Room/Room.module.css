@@ -1,0 +1,175 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+  max-width: 460px;
+  padding: 28px 0 90px;
+  font-family: var(--roboto);
+  color: var(--text);
+
+  &--center {
+    align-items: center;
+    gap: 12px;
+    padding-top: 80px;
+    text-align: center;
+  }
+
+  &__status {
+    margin: 0;
+    color: var(--text-muted);
+  }
+
+  &__error {
+    margin: 0;
+    padding: 10px 14px;
+    background-color: var(--danger-soft);
+    color: var(--red);
+    border: 1px solid rgba(255, 93, 104, 0.3);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    overflow: hidden;
+  }
+}
+
+/* Encabezado */
+.hero {
+  padding: 4px 4px 6px;
+  text-align: center;
+
+  &__eyebrow {
+    margin: 0 0 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  &__title {
+    margin: 0;
+    font-family: var(--bebas);
+    font-size: 46px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    overflow-wrap: anywhere;
+  }
+}
+
+/* Compartir */
+.share {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+  padding: 14px;
+  background: linear-gradient(135deg, rgba(47, 209, 124, 0.12), rgba(107, 124, 255, 0.08));
+  border: 1px solid rgba(47, 209, 124, 0.25);
+  border-radius: var(--radius);
+
+  &__text {
+    margin: 0;
+    font-size: 13px;
+    color: var(--ultra-light-gray);
+  }
+
+  &__row {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+  }
+
+  &__url {
+    flex: 1;
+    min-width: 0;
+    padding: 9px 12px;
+    background-color: rgba(0, 0, 0, 0.35);
+    border-radius: var(--radius-sm);
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 12px;
+    color: var(--ultra-light-gray);
+    white-space: nowrap;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    user-select: all;
+  }
+}
+
+/* Botón de actualizar (paso 3) */
+.refresh {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  background: none;
+  color: var(--text-muted);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: 12px;
+  cursor: pointer;
+  transition:
+    color 0.2s,
+    border-color 0.2s;
+
+  @media (hover: hover) {
+    &:hover:not(:disabled) {
+      color: var(--text);
+      border-color: var(--border-strong);
+    }
+  }
+
+  &:disabled {
+    cursor: progress;
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+  }
+
+  &__icon {
+    display: inline-block;
+    font-size: 14px;
+    line-height: 1;
+  }
+}
+
+/* Carga */
+.skeleton {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+
+  & span {
+    display: block;
+    background: linear-gradient(
+      90deg,
+      var(--surface) 0%,
+      var(--surface-raised) 50%,
+      var(--surface) 100%
+    );
+    background-size: 200% 100%;
+    border-radius: var(--radius);
+    animation: shimmer 1.4s ease-in-out infinite;
+  }
+
+  &__title {
+    width: 60%;
+    height: 46px;
+    margin: 20px auto 8px;
+  }
+
+  &__card {
+    height: 140px;
+  }
+}
+
+@keyframes shimmer {
+  from {
+    background-position: 100% 0;
+  }
+
+  to {
+    background-position: -100% 0;
+  }
+}

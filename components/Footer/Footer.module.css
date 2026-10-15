@@ -1,15 +1,19 @@
 .container {
   position: fixed;
   bottom: 0;
-  background-color: var(--green);
-  width: 100%;
   left: 0;
-  font-family: var(--roboto);
-  color: black;
-  font-weight: bold;
-  text-align: center;
-  height: 30px;
   display: flex;
   justify-content: center;
   align-items: center;
+  width: 100%;
+  height: 34px;
+  background-color: rgba(12, 14, 18, 0.78);
+  border-top: 1px solid var(--border);
+  backdrop-filter: blur(12px);
+  font-family: var(--roboto);
+  font-size: 12px;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--text-muted);
+  z-index: 10;
 }

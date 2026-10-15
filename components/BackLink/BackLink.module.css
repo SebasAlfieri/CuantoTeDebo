@@ -1,0 +1,29 @@
+.link {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 14px;
+  background-color: transparent;
+  color: var(--accent);
+  border: 1px solid rgba(47, 209, 124, 0.45);
+  border-radius: var(--radius-pill);
+  font-family: var(--roboto);
+  font-size: 13px;
+  font-weight: 600;
+  text-decoration: none;
+  transition:
+    background-color 0.2s,
+    border-color 0.2s;
+
+  @media (hover: hover) {
+    &:hover {
+      background-color: var(--accent-soft);
+      border-color: var(--accent);
+    }
+  }
+
+  &:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
+  }
+}

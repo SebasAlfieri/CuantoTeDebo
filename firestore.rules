@@ -1,0 +1,48 @@
+rules_version = '2';
+
+// Salas de "¿Cuánto Te Debo?". Cada sala es un único documento en /rooms/{roomId}.
+// No hay login: quien tiene el link (ID aleatorio de 20 caracteres) puede leer y cargar gastos.
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /rooms/{roomId} {
+      function isValidId() {
+        return roomId.matches('^[A-Za-z0-9]{20}$');
+      }
+
+      function hasValidLists(data) {
+        return data.participants is list
+          && data.participants.size() <= 30
+          && data.expenses is list
+          && data.expenses.size() <= 300
+          && (!('payments' in data) || (data.payments is map && data.payments.size() <= 30));
+      }
+
+      // Solo lectura por ID: nadie puede listar todas las salas.
+      allow get: if isValidId();
+      allow list: if false;
+
+      allow create: if isValidId()
+        && request.resource.data.keys().hasOnly(['name', 'createdAt', 'participants', 'expenses'])
+        && request.resource.data.name is string
+        && request.resource.data.name.size() > 0
+        && request.resource.data.name.size() <= 40
+        && request.resource.data.createdAt == request.time
+        && hasValidLists(request.resource.data)
+        && request.resource.data.participants.size() == 1
+        && request.resource.data.expenses.size() == 0;
+
+      // Solo se pueden modificar participantes, gastos y datos de cobro (CBU/CVU/alias);
+      // el nombre y la fecha quedan fijos.
+      allow update: if isValidId()
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participants', 'expenses', 'payments'])
+        && hasValidLists(request.resource.data);
+
+      allow delete: if false;
+    }
+
+    // Todo lo demás queda cerrado.
+    match /{document=**} {
+      allow read, write: if false;
+    }
+  }
+}

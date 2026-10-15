@@ -1,0 +1,660 @@
+.container {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  width: 100%;
+  min-width: 0;
+  max-width: 460px;
+  padding: 20px 0 90px;
+  font-family: var(--roboto);
+  color: var(--text);
+
+  &__error {
+    margin: 0;
+    padding: 10px 14px;
+    background-color: var(--danger-soft);
+    color: var(--red);
+    border: 1px solid rgba(255, 93, 104, 0.3);
+    border-radius: var(--radius-sm);
+    font-size: 14px;
+    overflow: hidden;
+  }
+
+  &__top {
+    display: flex;
+    margin-bottom: -4px;
+  }
+
+  &__footer {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 18px;
+    padding-top: 6px;
+  }
+}
+
+/* Encabezado */
+.hero {
+  padding: 4px 4px 6px;
+  text-align: center;
+
+  &__eyebrow {
+    margin: 0 0 6px;
+    font-size: 12px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--accent);
+  }
+
+  &__title {
+    margin: 0;
+    font-family: var(--bebas);
+    font-size: 46px;
+    font-weight: 400;
+    line-height: 1;
+    letter-spacing: 0.02em;
+    overflow-wrap: anywhere;
+  }
+
+  &__meta {
+    margin: 8px 0 0;
+    font-size: 14px;
+    color: var(--text-muted);
+  }
+}
+
+/* Pasos */
+.step {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 16px;
+  background-color: var(--surface);
+  border: 1px solid var(--border);
+  border-radius: var(--radius);
+  box-shadow: var(--shadow);
+
+  &__header {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__number {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    flex-shrink: 0;
+    width: 24px;
+    height: 24px;
+    background-color: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 50%;
+    font-size: 13px;
+    font-weight: 700;
+  }
+
+  &__title {
+    flex: 1;
+    margin: 0;
+    font-size: 17px;
+    font-weight: 700;
+    text-align: left;
+  }
+
+  &__action {
+    flex-shrink: 0;
+  }
+}
+
+/* Controles */
+.label {
+  padding: 0;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--text-muted);
+}
+
+.input {
+  width: 100%;
+  min-width: 0;
+  height: 46px;
+  margin: 0;
+  padding: 0 14px;
+  background-color: var(--surface-raised);
+  color: var(--text);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  font-size: 16px;
+  transition:
+    border-color 0.2s,
+    box-shadow 0.2s;
+
+  &::placeholder {
+    color: var(--light-gray);
+  }
+
+  &:focus-visible {
+    outline: none;
+    border-color: var(--accent);
+    box-shadow: 0 0 0 3px var(--accent-soft);
+  }
+
+  &--small {
+    height: 36px;
+    padding: 0 12px;
+    font-size: 14px;
+  }
+
+  &--amount {
+    padding-left: 28px;
+    font-size: 20px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+    -moz-appearance: textfield;
+
+    &::-webkit-outer-spin-button,
+    &::-webkit-inner-spin-button {
+      -webkit-appearance: none;
+      margin: 0;
+    }
+  }
+}
+
+.icon {
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+
+  & svg {
+    width: 16px;
+    height: 16px;
+    fill: currentColor;
+  }
+
+  & span,
+  & div {
+    display: inline-flex;
+  }
+}
+
+.empty {
+  margin: 0;
+  padding: 14px;
+  background-color: var(--surface-raised);
+  border: 1px dashed var(--border-strong);
+  border-radius: var(--radius-sm);
+  color: var(--text-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+/* 1. Personas */
+.inline {
+  display: flex;
+  gap: 8px;
+}
+
+.chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 4px 4px 5px;
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  font-weight: 500;
+
+  &--confirming {
+    border-color: var(--red);
+    background-color: var(--danger-soft);
+  }
+
+  &__name {
+    text-transform: capitalize;
+  }
+
+  &__remove {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    background: none;
+    color: var(--text-muted);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        background-color: var(--danger-soft);
+        color: var(--red);
+      }
+    }
+
+    &:disabled {
+      opacity: 0.4;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--red);
+    }
+  }
+}
+
+.confirm {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  overflow: hidden;
+
+  &__text {
+    margin: 0;
+    font-size: 14px;
+  }
+
+  &__name {
+    text-transform: capitalize;
+  }
+
+  &__actions {
+    display: flex;
+    gap: 6px;
+  }
+}
+
+/* 2. Cargar gasto */
+.expenseForm {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.payers {
+  margin: 0;
+  padding: 0;
+  border: none;
+
+  & legend {
+    margin-bottom: 8px;
+  }
+
+  &__list {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 8px;
+  }
+}
+
+.payer {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px 6px 6px;
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-pill);
+  font-size: 14px;
+  color: var(--text-muted);
+  cursor: pointer;
+  transition: color 0.2s;
+
+  &--selected {
+    color: var(--text);
+  }
+
+  & input {
+    position: absolute;
+    opacity: 0;
+    pointer-events: none;
+  }
+
+  &:has(input:focus-visible) {
+    outline: 2px solid var(--white);
+    outline-offset: 2px;
+  }
+
+  &__highlight {
+    position: absolute;
+    inset: -1px;
+    border: 2px solid;
+    border-radius: inherit;
+    pointer-events: none;
+  }
+
+  &__name {
+    position: relative;
+    font-weight: 600;
+    text-transform: capitalize;
+  }
+}
+
+.fields {
+  display: grid;
+  grid-template-columns: 1fr 1.3fr;
+  gap: 10px;
+}
+
+.field {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  min-width: 0;
+}
+
+.money {
+  position: relative;
+  display: flex;
+  align-items: center;
+
+  &__sign {
+    position: absolute;
+    left: 13px;
+    color: var(--text-muted);
+    font-size: 18px;
+    font-weight: 700;
+    pointer-events: none;
+  }
+}
+
+/* 3. Gastos */
+.people {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.person {
+  padding: 12px;
+  background-color: var(--surface-raised);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+
+  &__summary {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  &__info {
+    display: flex;
+    flex-direction: column;
+    flex: 1;
+    min-width: 0;
+  }
+
+  &__name {
+    font-weight: 700;
+    text-transform: capitalize;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__count {
+    font-size: 12px;
+    color: var(--text-muted);
+  }
+
+  &__total {
+    font-size: 18px;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__expenses {
+    margin: 10px 0 0;
+    padding: 4px 0 0 44px;
+    border-top: 1px solid var(--border);
+    list-style: none;
+  }
+}
+
+.expense {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  min-height: 34px;
+  overflow: hidden;
+  font-size: 14px;
+
+  &__description {
+    flex: 1;
+    min-width: 0;
+    color: var(--ultra-light-gray);
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__amount {
+    font-variant-numeric: tabular-nums;
+  }
+
+  &__remove {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 26px;
+    height: 26px;
+    padding: 0;
+    background: none;
+    color: var(--light-gray);
+    border: none;
+    border-radius: 50%;
+    cursor: pointer;
+    transition:
+      background-color 0.2s,
+      color 0.2s;
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        background-color: var(--danger-soft);
+        color: var(--red);
+      }
+    }
+
+    &:disabled {
+      opacity: 0.4;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--red);
+    }
+  }
+}
+
+/* Datos de cobro (CBU/CVU/alias) */
+.payment {
+  margin-top: 10px;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+
+  &__form {
+    display: flex;
+    flex-direction: column;
+    gap: 6px;
+  }
+
+  &__row {
+    display: flex;
+    gap: 6px;
+  }
+
+  &__hint {
+    margin: 0;
+    font-size: 12px;
+    color: var(--text-muted);
+
+    &--error {
+      color: var(--red);
+    }
+  }
+
+  &__saved {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    min-width: 0;
+  }
+
+  &__copy {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    flex: 1;
+    min-width: 0;
+    margin-left: -6px;
+    padding: 4px 6px;
+    background: none;
+    color: inherit;
+    border: none;
+    border-radius: 8px;
+    text-align: left;
+    cursor: pointer;
+    transition: background-color 0.2s;
+
+    @media (hover: hover) {
+      &:hover {
+        background-color: rgba(255, 255, 255, 0.06);
+
+        & .payment__icon {
+          color: var(--accent);
+        }
+      }
+    }
+
+    &:active {
+      background-color: var(--accent-soft);
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--accent);
+    }
+
+    &--done {
+      & .payment__value {
+        font-family: inherit;
+        font-weight: 700;
+        text-decoration: none;
+      }
+
+      & .payment__icon {
+        color: var(--accent);
+      }
+    }
+  }
+
+  &__icon {
+    display: inline-flex;
+    flex-shrink: 0;
+    color: var(--text-muted);
+    transition: color 0.2s;
+  }
+
+  &__type {
+    flex-shrink: 0;
+    padding: 2px 6px;
+    background-color: var(--accent-soft);
+    color: var(--accent);
+    border-radius: 6px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+  }
+
+  &__value {
+    flex: 0 1 auto;
+    min-width: 0;
+    font-family: ui-monospace, SFMono-Regular, Menlo, monospace;
+    font-size: 13px;
+    color: var(--accent);
+    text-decoration: underline;
+    text-decoration-thickness: 1px;
+    text-underline-offset: 3px;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+  }
+
+  &__edit,
+  &__add {
+    padding: 4px 8px;
+    background: none;
+    color: var(--text-muted);
+    border: none;
+    border-radius: 6px;
+    font-size: 13px;
+    cursor: pointer;
+    transition:
+      color 0.2s,
+      background-color 0.2s;
+
+    @media (hover: hover) {
+      &:hover:not(:disabled) {
+        color: var(--text);
+        background-color: rgba(255, 255, 255, 0.06);
+      }
+    }
+
+    &:disabled {
+      opacity: 0.4;
+      cursor: not-allowed;
+    }
+
+    &:focus-visible {
+      outline: 2px solid var(--accent);
+    }
+  }
+
+  &__edit {
+    flex-shrink: 0;
+  }
+
+  &__add {
+    margin-left: -8px;
+    color: var(--accent);
+  }
+}
+
+/* 4. Resultado */
+.result {
+  background-color: var(--surface);
+  border-radius: var(--radius-sm);
+
+  /* Mientras se genera la imagen para compartir (modo "yo solo") */
+  &[data-capturing='true'] {
+    padding: 16px;
+
+    & [data-capture='exclude'] {
+      display: none;
+    }
+  }
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
