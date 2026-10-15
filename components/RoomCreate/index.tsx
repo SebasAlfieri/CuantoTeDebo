@@ -5,6 +5,7 @@ import { useRouter } from 'next/navigation';
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion';
 import cs from 'classnames';
 
+import { logger } from '@/lib/logger';
 import { storePayerId } from '@/lib/room-storage';
 import { createRoom, ROOM_NAME_MAX_LENGTH } from '@/lib/rooms';
 import { normalizeName, PERSON_NAME_MAX_LENGTH } from '@/lib/split';
@@ -34,7 +35,7 @@ const RoomCreate = () => {
       storePayerId(roomId, participantId);
       router.push(`/sala/${roomId}`);
     } catch (err) {
-      console.error('No se pudo crear la sala', err);
+      logger.error('No se pudo crear la sala', err);
       setError('No se pudo crear la sala. Probá de nuevo.');
       setIsSubmitting(false);
     }

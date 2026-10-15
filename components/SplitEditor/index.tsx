@@ -5,6 +5,7 @@ import { AnimatePresence, MotionConfig, motion, type Variants } from 'framer-mot
 import { ReactSVG } from 'react-svg';
 import cs from 'classnames';
 
+import { logger } from '@/lib/logger';
 import {
   getPaymentInfoType,
   isValidPaymentInfo,
@@ -162,7 +163,7 @@ const SplitEditor = ({
     try {
       await action();
     } catch (err) {
-      console.error(errorMessage, err);
+      logger.error(errorMessage, err);
       setError(errorMessage);
     } finally {
       setPendingAction(null);
@@ -627,7 +628,7 @@ const SplitEditor = ({
         </Step>
 
         <motion.div className={s.container__footer} variants={itemVariants}>
-          <BackLink label="Volver al inicio" />
+          <BackLink label="Volver al inicio" className={s.container__back} />
           <Cafecito />
         </motion.div>
       </motion.div>

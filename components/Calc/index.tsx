@@ -6,6 +6,7 @@ import * as domtoimage from 'html-to-image';
 import html2canvas from 'html2canvas';
 
 import useIsMobile from '@/hooks/use-is-mobile';
+import { logger } from '@/lib/logger';
 import { loadSoloData, saveSoloData, type SoloData } from '@/lib/solo-storage';
 import { createId, pickColor, PERSON_NAME_MAX_LENGTH } from '@/lib/split';
 import type { Participant } from '@/types/room';
@@ -88,7 +89,7 @@ const Calc = () => {
       }
     } catch (err) {
       if (!(err instanceof DOMException && err.name === 'AbortError')) {
-        console.error('No se pudo compartir el resultado', err);
+        logger.error('No se pudo compartir el resultado', err);
       }
     } finally {
       restore();

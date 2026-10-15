@@ -4,6 +4,7 @@ import { useCallback, useEffect, useRef, useState } from 'react';
 import { AnimatePresence, motion } from 'framer-motion';
 import cs from 'classnames';
 
+import { logger } from '@/lib/logger';
 import {
   addExpense,
   addParticipant,
@@ -49,7 +50,7 @@ const Room = ({ roomId }: RoomProps) => {
       setNotice(null);
     } catch (err) {
       if (requestId !== requestIdRef.current) return;
-      console.error('No se pudo cargar la sala', err);
+      logger.error('No se pudo cargar la sala', err);
       setStatus((prev) => (prev === 'ready' ? prev : 'error'));
       setNotice('No se pudo actualizar la sala. Revisá tu conexión.');
     } finally {

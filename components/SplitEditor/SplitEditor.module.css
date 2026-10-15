@@ -32,6 +32,10 @@
     gap: 18px;
     padding-top: 6px;
   }
+
+  &__back {
+    margin-bottom: 20px;
+  }
 }
 
 /* Encabezado */
