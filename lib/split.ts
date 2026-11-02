@@ -30,18 +30,18 @@ export const isExpense = (value: unknown): value is Expense =>
   Number.isFinite(value.amount) &&
   typeof value.createdAt === 'number';
 
+// Ordenados para que dos personas seguidas tengan tonos bien distintos.
 export const PERSON_COLORS = [
-  '#E879F9',
-  '#9370DB',
-  '#188afc',
-  '#70c9ec',
-  '#3cfae7',
-  '#7dd67d',
-  '#A3E635',
-  '#f9de47',
-  '#FFB30F',
-  '#FFB6C1',
-  '#FF4500'
+  '#1d5fd6',
+  '#e0561a',
+  '#0f9a84',
+  '#d4246f',
+  '#7a9a0f',
+  '#2b8fd6',
+  '#c48a07',
+  '#9b3fd1',
+  '#e23b3b',
+  '#13865a'
 ];
 
 // Diferencias menores a medio centavo se consideran saldadas (evita deudas de $0 por flotantes).
@@ -110,8 +110,17 @@ export const calculateOptimizedTransactions = <T extends { amount: number }>(
 export const getDebtKey = (debtorId: string, creditorId: string, amount: number): string =>
   `${debtorId}_${creditorId}_${Math.round(amount * 100)}`;
 
-export const pickColor = (usedColors: string[]): string => {
-  const available = PERSON_COLORS.filter((color) => !usedColors.includes(color));
-  const pool = available.length > 0 ? available : PERSON_COLORS;
-  return pool[Math.floor(Math.random() * pool.length)];
+export const pickColor = (usedColors: string[]): string =>
+  PERSON_COLORS.find((color) => !usedColors.includes(color)) ??
+  PERSON_COLORS[usedColors.length % PERSON_COLORS.length];
+
+// Fondo pálido y tinta oscura del mismo color de la persona (sirve también para colores viejos guardados).
+export const getPersonTone = (hex: string): { tint: string; ink: string } => {
+  const value = Number.parseInt(hex.replace('#', ''), 16);
+  const channels = Number.isNaN(value)
+    ? [128, 128, 128]
+    : [value >> 16, (value >> 8) & 255, value & 255];
+  const mix = (target: number, amount: number) =>
+    `rgb(${channels.map((c) => Math.round(c + (target - c) * amount)).join(',')})`;
+  return { tint: mix(255, 0.8), ink: mix(0, 0.25) };
 };

@@ -1,6 +1,7 @@
 'use client';
 
 import { useEffect, useState } from 'react';
+import { AnimatePresence, motion } from 'framer-motion';
 import { saveAs } from 'file-saver';
 import * as domtoimage from 'html-to-image';
 import html2canvas from 'html2canvas';
@@ -16,10 +17,10 @@ import SplitEditor, { type SplitEditorActions } from '../SplitEditor';
 import s from './Calc.module.css';
 
 const CAPTURE_ID = 'screenshot';
-const CAPTURE_BACKGROUND = '#14171d';
+const CAPTURE_BACKGROUND = '#fffdf7';
 const SHARE_FILE_NAME = 'CuantoDeben.png';
 
-// Mientras se genera la imagen se ocultan los botones de copiar CBU/alias (ver SplitEditor.module.css).
+// Mientras se genera la imagen se sacan los controles del ticket (ver SplitEditor.module.css).
 const prepareCapture = async (element: HTMLElement): Promise<() => void> => {
   element.dataset.capturing = 'true';
   await new Promise((resolve) => requestAnimationFrame(resolve));
@@ -32,6 +33,7 @@ const Calc = () => {
   const isMobile = useIsMobile();
   const [data, setData] = useState<SoloData | null>(null);
   const [isSharing, setIsSharing] = useState(false);
+  const [isConfirmingReset, setIsConfirmingReset] = useState(false);
 
   useEffect(() => {
     setData(loadSoloData());
@@ -160,8 +162,7 @@ const Calc = () => {
 
   return (
     <SplitEditor
-      eyebrow="Cargar yo solo"
-      title="¿Cuánto Te Debo?"
+      title="Cargar yo solo"
       participants={data.participants}
       expenses={data.expenses}
       settled={data.settled}
@@ -169,8 +170,52 @@ const Calc = () => {
       storageScope="solo"
       intro={
         <p className={s.intro}>
-          📱 Todo se guarda en este dispositivo. Cargá a cada persona y lo que puso.
+          Todo queda guardado en este dispositivo. Sumá a cada persona y lo que puso.
         </p>
+      }
+      headerAction={
+        data.participants.length > 0 ? (
+          <AnimatePresence mode="wait" initial={false}>
+            {isConfirmingReset ? (
+              <motion.div
+                key="confirm"
+                className={s.reset__confirm}
+                initial={{ opacity: 0, x: 12 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: 12 }}
+                transition={{ duration: 0.15 }}>
+                <span>¿Borrar todo?</span>
+                <Button
+                  variant="danger"
+                  size="sm"
+                  onClick={() => {
+                    setData({ participants: [], expenses: [], settled: [] });
+                    setIsConfirmingReset(false);
+                  }}>
+                  Sí
+                </Button>
+                <Button variant="ghost" size="sm" onClick={() => setIsConfirmingReset(false)}>
+                  No
+                </Button>
+              </motion.div>
+            ) : (
+              <motion.button
+                key="reset"
+                type="button"
+                className={s.reset}
+                onClick={() => setIsConfirmingReset(true)}
+                initial={{ opacity: 0, x: -12 }}
+                animate={{ opacity: 1, x: 0 }}
+                exit={{ opacity: 0, x: -12 }}
+                transition={{ duration: 0.15 }}>
+                <span className={s.reset__icon} aria-hidden="true">
+                  ↺
+                </span>
+                Reiniciar
+              </motion.button>
+            )}
+          </AnimatePresence>
+        ) : undefined
       }
       resultCaptureId={CAPTURE_ID}
       resultActions={

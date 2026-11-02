@@ -3,13 +3,13 @@
 import { useState, type FormEvent } from 'react';
 import { useRouter } from 'next/navigation';
 import { AnimatePresence, MotionConfig, motion } from 'framer-motion';
-import cs from 'classnames';
 
 import { logger } from '@/lib/logger';
 import { storePayerId } from '@/lib/room-storage';
 import { createRoom, ROOM_NAME_MAX_LENGTH } from '@/lib/rooms';
 import { normalizeName, PERSON_NAME_MAX_LENGTH } from '@/lib/split';
 
+import Button from '../Button';
 import s from './RoomCreate.module.css';
 
 const RoomCreate = () => {
@@ -43,9 +43,7 @@ const RoomCreate = () => {
 
   return (
     <MotionConfig reducedMotion="user">
-      <section
-        className={cs(s.container, { [s['container--open']]: isOpen })}
-        aria-labelledby="room-create-title">
+      <section className={s.container} aria-labelledby="room-create-title">
         <button
           type="button"
           className={s.container__toggle}
@@ -53,13 +51,18 @@ const RoomCreate = () => {
           aria-controls="room-create-form"
           onClick={() => setIsOpen((prev) => !prev)}>
           <span className={s.container__icon} aria-hidden="true">
-            👥
+            <svg viewBox="0 0 24 24">
+              <circle cx="9" cy="8" r="3.2" />
+              <path d="M3.5 19a5.5 5.5 0 0 1 11 0" />
+              <circle cx="17" cy="9" r="2.6" />
+              <path d="M16 14.2a4.6 4.6 0 0 1 5 4.8" />
+            </svg>
           </span>
           <span className={s.container__copy}>
             <span id="room-create-title" className={s.container__heading}>
               Crear sala compartida
             </span>
-            <span className={s.container__caption}>Compartís un link y cada uno carga lo suyo</span>
+            <span className={s.container__caption}>Mandás un link y cada uno carga lo suyo</span>
           </span>
           <motion.span
             className={s.container__chevron}
@@ -114,9 +117,9 @@ const RoomCreate = () => {
                   </p>
                 )}
 
-                <button type="submit" className={s.container__submit} disabled={!canSubmit}>
+                <Button type="submit" block disabled={!canSubmit}>
                   {isSubmitting ? 'Creando…' : 'Crear sala y obtener link'}
-                </button>
+                </Button>
               </div>
             </motion.form>
           )}

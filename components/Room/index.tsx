@@ -1,10 +1,10 @@
-'use client';
+"use client";
 
-import { useCallback, useEffect, useRef, useState } from 'react';
-import { AnimatePresence, motion } from 'framer-motion';
-import cs from 'classnames';
+import { useCallback, useEffect, useRef, useState } from "react";
+import { AnimatePresence, motion } from "framer-motion";
+import cs from "classnames";
 
-import { logger } from '@/lib/logger';
+import { logger } from "@/lib/logger";
 import {
   addExpense,
   addParticipant,
@@ -12,16 +12,16 @@ import {
   removeExpense,
   removeParticipant,
   setDebtSettled,
-  setPaymentInfo
-} from '@/lib/rooms';
-import type { Room as RoomData } from '@/types/room';
+  setPaymentInfo,
+} from "@/lib/rooms";
+import type { Room as RoomData } from "@/types/room";
 
-import BackLink from '../BackLink';
-import Button from '../Button';
-import SplitEditor, { type SplitEditorActions } from '../SplitEditor';
-import s from './Room.module.css';
+import BackLink from "../BackLink";
+import Button from "../Button";
+import SplitEditor, { type SplitEditorActions } from "../SplitEditor";
+import s from "./Room.module.css";
 
-type LoadStatus = 'loading' | 'ready' | 'not-found' | 'error';
+type LoadStatus = "loading" | "ready" | "not-found" | "error";
 
 interface RoomProps {
   roomId: string;
@@ -31,9 +31,9 @@ const COPIED_FEEDBACK_MS = 2000;
 
 const Room = ({ roomId }: RoomProps) => {
   const [room, setRoom] = useState<RoomData | null>(null);
-  const [status, setStatus] = useState<LoadStatus>('loading');
+  const [status, setStatus] = useState<LoadStatus>("loading");
   const [isRefreshing, setIsRefreshing] = useState(false);
-  const [shareUrl, setShareUrl] = useState('');
+  const [shareUrl, setShareUrl] = useState("");
   const [canNativeShare, setCanNativeShare] = useState(false);
   const [isCopied, setIsCopied] = useState(false);
   const [notice, setNotice] = useState<string | null>(null);
@@ -47,13 +47,13 @@ const Room = ({ roomId }: RoomProps) => {
       const data = await getRoom(roomId);
       if (requestId !== requestIdRef.current) return;
       setRoom(data);
-      setStatus(data ? 'ready' : 'not-found');
+      setStatus(data ? "ready" : "not-found");
       setNotice(null);
     } catch (err) {
       if (requestId !== requestIdRef.current) return;
-      logger.error('No se pudo cargar la sala', err);
-      setStatus((prev) => (prev === 'ready' ? prev : 'error'));
-      setNotice('No se pudo actualizar la sala. Revisá tu conexión.');
+      logger.error("No se pudo cargar la sala", err);
+      setStatus((prev) => (prev === "ready" ? prev : "error"));
+      setNotice("No se pudo actualizar la sala. Revisá tu conexión.");
     } finally {
       if (requestId === requestIdRef.current) setIsRefreshing(false);
     }
@@ -67,18 +67,19 @@ const Room = ({ roomId }: RoomProps) => {
 
   useEffect(() => {
     setShareUrl(`${window.location.origin}/sala/${roomId}`);
-    setCanNativeShare(typeof navigator.share === 'function');
+    setCanNativeShare(typeof navigator.share === "function");
     void loadRoom();
   }, [roomId, loadRoom]);
 
   // Sin listeners en tiempo real: se refresca al volver a la pestaña (1 lectura).
   useEffect(() => {
     const handleVisibility = () => {
-      if (document.visibilityState === 'visible') void loadRoom();
+      if (document.visibilityState === "visible") void loadRoom();
     };
 
-    document.addEventListener('visibilitychange', handleVisibility);
-    return () => document.removeEventListener('visibilitychange', handleVisibility);
+    document.addEventListener("visibilitychange", handleVisibility);
+    return () =>
+      document.removeEventListener("visibilitychange", handleVisibility);
   }, [loadRoom]);
 
   useEffect(() => {
@@ -92,28 +93,31 @@ const Room = ({ roomId }: RoomProps) => {
       await navigator.clipboard.writeText(shareUrl);
       setIsCopied(true);
     } catch {
-      setNotice('No se pudo copiar. Copiá el link manualmente.');
+      setNotice("No se pudo copiar. Copiá el link manualmente.");
     }
   };
 
   const handleShare = async () => {
     try {
       await navigator.share({
-        title: room?.name ?? '¿Cuánto Te Debo?',
-        text: `Sumate a "${room?.name ?? 'la sala'}" y cargá lo que gastaste`,
-        url: shareUrl
+        title: room?.name ?? "¿Cuánto Te Debo?",
+        text: `Sumate a "${room?.name ?? "la sala"}" y cargá lo que gastaste`,
+        url: shareUrl,
       });
     } catch (err) {
-      if (err instanceof DOMException && err.name === 'AbortError') return;
+      if (err instanceof DOMException && err.name === "AbortError") return;
       void handleCopy();
     }
   };
 
-  if (status === 'loading') {
+  if (status === "loading") {
     return (
-      <div className={s.container}>
-        <div className={s.skeleton} role="status" aria-label="Cargando sala">
+      <div className={s.skeleton} role="status" aria-label="Cargando sala">
+        <div className={s.skeleton__hero}>
           <span className={s.skeleton__title} />
+          <span className={s.skeleton__line} />
+        </div>
+        <div className={s.skeleton__body}>
           <span className={s.skeleton__card} />
           <span className={s.skeleton__card} />
         </div>
@@ -121,19 +125,21 @@ const Room = ({ roomId }: RoomProps) => {
     );
   }
 
-  if (status === 'not-found' || status === 'error' || !room) {
+  if (status === "not-found" || status === "error" || !room) {
     return (
-      <div className={cs(s.container, s['container--center'])}>
-        <p className={s.hero__eyebrow}>¿Cuánto Te Debo?</p>
-        <h1 className={s.hero__title}>
-          {status === 'error' ? 'Algo falló' : 'Sala no encontrada'}
+      <div className={s.missing}>
+        <p className={s.missing__mark}>¿Cuánto te debo?</p>
+        <h1 className={s.missing__title}>
+          {status === "error" ? "Algo falló" : "Sala no encontrada"}
         </h1>
-        <p className={s.container__status} role="alert">
-          {status === 'error'
-            ? 'No se pudo cargar la sala. Revisá tu conexión.'
-            : 'Esta sala no existe o el link está incompleto.'}
+        <p className={s.missing__text} role="alert">
+          {status === "error"
+            ? "No se pudo cargar la sala. Revisá tu conexión."
+            : "Esta sala no existe o el link está incompleto."}
         </p>
-        {status === 'error' && <Button onClick={() => void loadRoom()}>Reintentar</Button>}
+        {status === "error" && (
+          <Button onClick={() => void loadRoom()}>Reintentar</Button>
+        )}
         <BackLink label="Ir al inicio" />
       </div>
     );
@@ -145,7 +151,9 @@ const Room = ({ roomId }: RoomProps) => {
       cancelPendingLoads();
       const participant = await addParticipant(room, name);
       setRoom((prev) =>
-        prev ? { ...prev, participants: [...prev.participants, participant] } : prev
+        prev
+          ? { ...prev, participants: [...prev.participants, participant] }
+          : prev,
       );
       return participant;
     },
@@ -156,22 +164,38 @@ const Room = ({ roomId }: RoomProps) => {
         prev
           ? {
               ...prev,
-              participants: prev.participants.filter((p) => p.id !== participant.id),
-              expenses: prev.expenses.filter((e) => e.participantId !== participant.id)
+              participants: prev.participants.filter(
+                (p) => p.id !== participant.id,
+              ),
+              expenses: prev.expenses.filter(
+                (e) => e.participantId !== participant.id,
+              ),
             }
-          : prev
+          : prev,
       );
     },
     addExpense: async (participantId, amount, description) => {
       cancelPendingLoads();
-      const expense = await addExpense(room.id, participantId, amount, description);
-      setRoom((prev) => (prev ? { ...prev, expenses: [...prev.expenses, expense] } : prev));
+      const expense = await addExpense(
+        room.id,
+        participantId,
+        amount,
+        description,
+      );
+      setRoom((prev) =>
+        prev ? { ...prev, expenses: [...prev.expenses, expense] } : prev,
+      );
     },
     removeExpense: async (expense) => {
       cancelPendingLoads();
       await removeExpense(room.id, expense);
       setRoom((prev) =>
-        prev ? { ...prev, expenses: prev.expenses.filter((e) => e.id !== expense.id) } : prev
+        prev
+          ? {
+              ...prev,
+              expenses: prev.expenses.filter((e) => e.id !== expense.id),
+            }
+          : prev,
       );
     },
     setSettled: async (debtKey, paid) => {
@@ -183,9 +207,9 @@ const Room = ({ roomId }: RoomProps) => {
               ...prev,
               settled: paid
                 ? [...prev.settled, debtKey]
-                : prev.settled.filter((key) => key !== debtKey)
+                : prev.settled.filter((key) => key !== debtKey),
             }
-          : prev
+          : prev,
       );
     },
     setPaymentInfo: async (participant, value) => {
@@ -196,17 +220,16 @@ const Room = ({ roomId }: RoomProps) => {
           ? {
               ...prev,
               participants: prev.participants.map((p) =>
-                p.id === participant.id ? { ...p, paymentInfo } : p
-              )
+                p.id === participant.id ? { ...p, paymentInfo } : p,
+              ),
             }
-          : prev
+          : prev,
       );
-    }
+    },
   };
 
   return (
     <SplitEditor
-      eyebrow="Sala compartida"
       title={room.name}
       participants={room.participants}
       expenses={room.expenses}
@@ -215,44 +238,49 @@ const Room = ({ roomId }: RoomProps) => {
       storageScope={room.id}
       intro={
         <>
-          <section className={s.share} aria-label="Invitar amigos">
-            <p className={s.share__text}>
-              Compartí el link: cualquiera puede sumar personas y cargar gastos.
-            </p>
-            <div className={s.share__row}>
-              <output className={s.share__url} title={shareUrl}>
-                {shareUrl.replace(/^https?:\/\//, '')}
-              </output>
-              <Button
-                size="sm"
-                variant={isCopied ? 'light' : 'primary'}
-                onClick={() => void handleCopy()}>
-                <AnimatePresence mode="wait" initial={false}>
-                  <motion.span
-                    key={isCopied ? 'copied' : 'copy'}
-                    initial={{ opacity: 0, y: 6 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    exit={{ opacity: 0, y: -6 }}
-                    transition={{ duration: 0.15 }}>
-                    {isCopied ? '✓ Copiado' : 'Copiar'}
-                  </motion.span>
-                </AnimatePresence>
-              </Button>
-              {canNativeShare && (
-                <Button size="sm" variant="ghost" onClick={() => void handleShare()}>
-                  Compartir
-                </Button>
-              )}
-            </div>
-          </section>
+          <div className={s.share}>
+            <output className={s.share__url} title={shareUrl}>
+              {shareUrl.replace(/^https?:\/\//, "")}
+            </output>
+            <button
+              type="button"
+              className={cs(s.share__button, {
+                [s["share__button--done"]]: isCopied,
+              })}
+              onClick={() =>
+                void (canNativeShare ? handleShare() : handleCopy())
+              }
+              aria-label={
+                canNativeShare
+                  ? "Invitar: compartir el link de la sala"
+                  : "Copiar el link de la sala"
+              }
+            >
+              <AnimatePresence mode="wait" initial={false}>
+                <motion.span
+                  key={isCopied ? "copied" : "copy"}
+                  initial={{ opacity: 0, y: 6 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  exit={{ opacity: 0, y: -6 }}
+                  transition={{ duration: 0.15 }}
+                >
+                  {isCopied ? "✓ Copiado" : "Invitar"}
+                </motion.span>
+              </AnimatePresence>
+            </button>
+          </div>
+          <p className={s.share__text}>
+            Con el link, cualquiera puede sumarse y cargar gastos.
+          </p>
           <AnimatePresence>
             {notice && (
               <motion.p
-                className={s.container__error}
+                className={s.notice}
                 role="alert"
-                initial={{ opacity: 0, height: 0, marginTop: 0 }}
-                animate={{ opacity: 1, height: 'auto', marginTop: 14 }}
-                exit={{ opacity: 0, height: 0, marginTop: 0 }}>
+                initial={{ opacity: 0, height: 0 }}
+                animate={{ opacity: 1, height: "auto" }}
+                exit={{ opacity: 0, height: 0 }}
+              >
                 {notice}
               </motion.p>
             )}
@@ -266,14 +294,18 @@ const Room = ({ roomId }: RoomProps) => {
           onClick={() => void loadRoom()}
           disabled={isRefreshing}
           aria-busy={isRefreshing}
-          aria-label="Actualizar la sala">
+          aria-label="Actualizar la sala"
+        >
           <motion.span
             className={s.refresh__icon}
             aria-hidden="true"
             animate={isRefreshing ? { rotate: 360 } : { rotate: 0 }}
             transition={
-              isRefreshing ? { repeat: Infinity, duration: 0.8, ease: 'linear' } : { duration: 0 }
-            }>
+              isRefreshing
+                ? { repeat: Infinity, duration: 0.8, ease: "linear" }
+                : { duration: 0 }
+            }
+          >
             ↻
           </motion.span>
           Actualizar

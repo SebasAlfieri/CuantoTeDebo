@@ -1,29 +1,34 @@
 .link {
   display: inline-flex;
   align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
+  gap: 4px;
+  height: 44px;
+  padding: 0 14px 0 8px;
   background-color: transparent;
-  color: var(--accent);
-  border: 1px solid rgba(47, 209, 124, 0.45);
+  color: var(--text);
   border-radius: var(--radius-pill);
-  font-family: var(--roboto);
-  font-size: 13px;
-  font-weight: 600;
+  box-shadow: inset 0 0 0 2px var(--control);
+  font-size: 15px;
+  font-weight: 700;
   text-decoration: none;
-  transition:
-    background-color 0.2s,
-    border-color 0.2s;
+  transition: transform 0.15s var(--spring);
 
-  @media (hover: hover) {
-    &:hover {
-      background-color: var(--accent-soft);
-      border-color: var(--accent);
-    }
+  &:active {
+    transform: scale(0.95);
   }
 
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
+  & svg {
+    width: 20px;
+    height: 20px;
+    fill: none;
+    stroke: currentColor;
+    stroke-width: 2;
+    stroke-linecap: round;
+  }
+
+  &--on-accent {
+    color: var(--white);
+    background-color: rgba(255, 255, 255, 0.16);
+    box-shadow: none;
   }
 }

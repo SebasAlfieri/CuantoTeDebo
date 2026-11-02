@@ -1,39 +1,67 @@
 .container {
   display: flex;
   flex-direction: column;
-  justify-content: center;
-  align-items: center;
-  gap: 28px;
   flex: 1;
   min-width: 0;
-  min-height: 100dvh;
-  margin: 0 8px;
-  padding: 40px 0 80px;
-  font-family: var(--roboto);
 }
 
 .hero {
-  text-align: center;
-  animation: fade-up 0.6s var(--ease-out) both;
+  padding: 20px 16px 72px;
+  background-color: var(--accent);
+  color: var(--white);
+  border-radius: 0 0 32px 32px;
+
+  &__inner {
+    max-width: 520px;
+    margin: 0 auto;
+    animation: rise 0.6s var(--ease-out) both;
+  }
+
+  &__mark {
+    margin: 0;
+    font-size: 15px;
+    font-weight: 800;
+  }
 
   &__title {
-    margin: 0;
-    font-family: var(--bebas);
+    margin: 36px 0 0;
     font-size: 40px;
-    font-weight: 400;
-    line-height: 1;
-    letter-spacing: 0.02em;
-    color: var(--green);
+    font-weight: 800;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    text-wrap: balance;
 
     @media (--small) {
-      font-size: 68px;
+      font-size: 52px;
     }
   }
 
   &__subtitle {
-    margin: 12px 0 0;
-    font-size: 16px;
-    color: var(--ultra-light-gray);
+    margin: 14px 0 0;
+    font-size: 17px;
+    line-height: 1.4;
+    opacity: 0.9;
+  }
+
+  &__faces {
+    display: flex;
+    margin-top: 24px;
+  }
+
+  &__face {
+    display: inline-grid;
+    place-items: center;
+    width: 40px;
+    height: 40px;
+    margin-left: -10px;
+    border-radius: 50%;
+    box-shadow: 0 0 0 3px var(--accent);
+    font-weight: 800;
+    animation: pop 0.5s var(--spring) both;
+
+    &:first-child {
+      margin-left: 0;
+    }
   }
 }
 
@@ -42,18 +70,20 @@
   flex-direction: column;
   gap: 12px;
   width: 100%;
-  max-width: 460px;
+  max-width: 552px;
+  margin: -44px auto 0;
+  padding: 0 16px;
 
   & > * {
-    animation: fade-up 0.6s var(--ease-out) both;
+    animation: rise 0.6s var(--ease-out) both;
   }
 
   & > :nth-child(1) {
-    animation-delay: 0.08s;
+    animation-delay: 0.1s;
   }
 
   & > :nth-child(2) {
-    animation-delay: 0.16s;
+    animation-delay: 0.18s;
   }
 }
 
@@ -61,82 +91,83 @@
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 18px 16px;
+  padding: 18px 18px 18px 16px;
   background-color: var(--surface);
   color: var(--text);
-  border: 1px solid var(--border);
   border-radius: var(--radius);
-  box-shadow: var(--shadow);
   text-decoration: none;
-  transition:
-    border-color 0.2s,
-    transform 0.2s var(--ease-out);
+  transition: transform 0.2s var(--spring);
 
-  @media (hover: hover) {
-    &:hover {
-      border-color: rgba(47, 209, 124, 0.4);
-      transform: translateY(-2px);
-    }
-  }
-
-  &:focus-visible {
-    outline: 2px solid var(--accent);
-    outline-offset: 2px;
+  &:active {
+    transform: scale(0.97);
   }
 
   &__icon {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
+    display: inline-grid;
+    place-items: center;
     flex-shrink: 0;
-    width: 46px;
-    height: 46px;
-    background-color: var(--surface-raised);
-    border: 1px solid var(--border);
+    width: 52px;
+    height: 52px;
+    background-color: var(--ground);
+    color: var(--text);
     border-radius: var(--radius-sm);
-    font-size: 22px;
+
+    & svg {
+      width: 26px;
+      height: 26px;
+      fill: none;
+      stroke: currentColor;
+      stroke-width: 2;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+    }
   }
 
   &__copy {
     display: flex;
     flex-direction: column;
     flex: 1;
-    gap: 3px;
+    gap: 2px;
   }
 
   &__title {
-    font-size: 17px;
-    font-weight: 700;
+    font-size: 18px;
+    font-weight: 800;
   }
 
   &__caption {
-    font-size: 13px;
     color: var(--text-muted);
+    font-size: 14px;
   }
 
   &__arrow {
-    display: inline-flex;
-    justify-content: center;
-    align-items: center;
     flex-shrink: 0;
-    width: 32px;
-    height: 32px;
-    background-color: var(--accent);
-    color: var(--accent-ink);
-    border-radius: 50%;
-    font-size: 17px;
-    font-weight: 700;
+    width: 22px;
+    height: 22px;
+    fill: none;
+    stroke: var(--text-muted);
+    stroke-width: 2.2;
+    stroke-linecap: round;
+    stroke-linejoin: round;
   }
 }
 
-@keyframes fade-up {
+.support {
+  display: flex;
+  justify-content: center;
+  padding: 40px 16px 16px;
+}
+
+@keyframes rise {
   from {
     opacity: 0;
-    transform: translateY(12px);
+    transform: translateY(16px);
   }
+}
 
-  to {
-    opacity: 1;
-    transform: translateY(0);
+@keyframes pop {
+  from {
+    opacity: 0;
+    transform: scale(0.6);
   }
 }
