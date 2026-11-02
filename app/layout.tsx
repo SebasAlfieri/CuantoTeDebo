@@ -14,7 +14,7 @@ export const metadata: Metadata = {
     },
   ],
   // Los íconos y la imagen para compartir salen de app/ (favicon.ico, icon.png, apple-icon.png, opengraph-image.png).
-  metadataBase: new URL("https://cuantotedebo.com"),
+  // Sin metadataBase: en Vercel, Next.js arma las URLs absolutas con el dominio de producción del proyecto.
   openGraph: {
     type: "website",
     locale: "es_AR",
