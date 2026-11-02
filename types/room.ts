@@ -19,6 +19,8 @@ export interface Room {
   name: string;
   participants: Participant[];
   expenses: Expense[];
+  // Claves (ver getDebtKey) de las deudas marcadas como pagadas.
+  settled: string[];
 }
 
 export interface ParticipantBalance extends Participant {

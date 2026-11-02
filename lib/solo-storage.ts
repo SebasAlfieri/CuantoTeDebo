@@ -10,9 +10,10 @@ const LEGACY_STORAGE_KEY = 'splitPayments';
 export interface SoloData {
   participants: Participant[];
   expenses: Expense[];
+  settled: string[];
 }
 
-const EMPTY_DATA: SoloData = { participants: [], expenses: [] };
+const EMPTY_DATA: SoloData = { participants: [], expenses: [], settled: [] };
 
 const isRecord = (value: unknown): value is Record<string, unknown> =>
   typeof value === 'object' && value !== null;
@@ -28,14 +29,18 @@ const parseSoloData = (value: unknown): SoloData => {
     ? value.expenses.filter(isExpense).filter((e) => ids.has(e.participantId))
     : [];
 
-  return { participants, expenses };
+  const settled = Array.isArray(value.settled)
+    ? value.settled.filter((key): key is string => typeof key === 'string')
+    : [];
+
+  return { participants, expenses, settled };
 };
 
 // Convierte cada persona de la versión anterior en una persona con un único gasto.
 const migrateLegacy = (value: unknown): SoloData => {
   if (!Array.isArray(value)) return EMPTY_DATA;
 
-  const data: SoloData = { participants: [], expenses: [] };
+  const data: SoloData = { participants: [], expenses: [], settled: [] };
 
   value.forEach((item: unknown) => {
     if (

@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion';
 import cs from 'classnames';
 
 import { getPaymentInfoType } from '@/lib/payment-info';
-import { calculateOptimizedTransactions, formatNumber } from '@/lib/split';
+import { calculateOptimizedTransactions, formatNumber, getDebtKey } from '@/lib/split';
 import type { ParticipantBalance } from '@/types/room';
 
 import AnimatedAmount from '../AnimatedAmount';
@@ -15,13 +15,15 @@ import s from './RoomSettlement.module.css';
 
 interface RoomSettlementProps {
   balances: ParticipantBalance[];
+  settled: string[];
+  onToggleSettled: (debtKey: string, paid: boolean) => void;
 }
 
 type CopyStatus = { id: string; state: 'copied' | 'error' } | null;
 
 const COPY_FEEDBACK_MS = 2000;
 
-const RoomSettlement = ({ balances }: RoomSettlementProps) => {
+const RoomSettlement = ({ balances, settled, onToggleSettled }: RoomSettlementProps) => {
   const [copyStatus, setCopyStatus] = useState<CopyStatus>(null);
 
   const { transactions, totalPerPerson } = calculateOptimizedTransactions(balances);
@@ -69,11 +71,13 @@ const RoomSettlement = ({ balances }: RoomSettlementProps) => {
                 ? getPaymentInfoType(creditor.paymentInfo)
                 : null;
               const status = copyStatus?.id === copyId ? copyStatus.state : null;
+              const debtKey = getDebtKey(debtor.id, creditor.id, transaction.amount);
+              const isPaid = settled.includes(debtKey);
 
               return (
                 <motion.li
                   key={copyId}
-                  className={s.debt}
+                  className={cs(s.debt, { [s['debt--paid']]: isPaid })}
                   layout
                   initial={{ opacity: 0, y: 8 }}
                   animate={{ opacity: 1, y: 0, transition: { delay: index * 0.05 } }}
@@ -128,7 +132,35 @@ const RoomSettlement = ({ balances }: RoomSettlementProps) => {
                       </div>
                     )}
                   </div>
-                  <span className={s.debt__amount}>${formatNumber(transaction.amount)}</span>
+                  <AnimatePresence>
+                    {isPaid && (
+                      <motion.span
+                        className={s.debt__check}
+                        aria-hidden="true"
+                        initial={{ scale: 0, opacity: 0 }}
+                        animate={{ scale: 1, opacity: 1 }}
+                        exit={{ scale: 0, opacity: 0 }}
+                        transition={{ type: 'spring', stiffness: 500, damping: 25 }}>
+                        ✓
+                      </motion.span>
+                    )}
+                  </AnimatePresence>
+                  <div className={s.debt__side}>
+                    <span className={s.debt__amount}>${formatNumber(transaction.amount)}</span>
+                    <button
+                      type="button"
+                      role="switch"
+                      aria-checked={isPaid}
+                      aria-label={`Pagado: ${debtor.name} le paga a ${creditor.name}`}
+                      className={cs(s.switch, { [s['switch--on']]: isPaid })}
+                      onClick={() => onToggleSettled(debtKey, !isPaid)}
+                      data-capture="exclude">
+                      <span className={s.switch__track} aria-hidden="true">
+                        <span className={s.switch__thumb} />
+                      </span>
+                      Pagado
+                    </button>
+                  </div>
                   <span className={s.visuallyHidden} role="status">
                     {status === 'copied' ? `${paymentType} de ${creditor.name} copiado` : ''}
                   </span>

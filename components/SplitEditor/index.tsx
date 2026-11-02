@@ -40,6 +40,7 @@ export interface SplitEditorActions {
   addExpense: (participantId: string, amount: number, description: string) => Promise<void>;
   removeExpense: (expense: Expense) => Promise<void>;
   setPaymentInfo: (participant: Participant, value: string) => Promise<void>;
+  setSettled: (debtKey: string, paid: boolean) => Promise<void>;
 }
 
 interface SplitEditorProps {
@@ -47,6 +48,7 @@ interface SplitEditorProps {
   title: string;
   participants: Participant[];
   expenses: Expense[];
+  settled: string[];
   actions: SplitEditorActions;
   // Clave para recordar en este navegador a quién se le cargó el último gasto.
   storageScope: string;
@@ -96,6 +98,7 @@ const SplitEditor = ({
   title,
   participants,
   expenses,
+  settled,
   actions,
   storageScope,
   intro,
@@ -618,7 +621,15 @@ const SplitEditor = ({
           {balances.length >= 2 ? (
             <>
               <div id={resultCaptureId} className={s.result}>
-                <RoomSettlement balances={balances} />
+                <RoomSettlement
+                  balances={balances}
+                  settled={settled}
+                  onToggleSettled={(debtKey, paid) =>
+                    void runAction(debtKey, 'No se pudo actualizar el pago. Probá de nuevo.', () =>
+                      actions.setSettled(debtKey, paid)
+                    )
+                  }
+                />
               </div>
               {resultActions}
             </>

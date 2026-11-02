@@ -63,7 +63,11 @@ const parseRoom = (id: string, data: unknown): Room | null => {
       : participant;
   });
 
-  return { id, name: data.name, participants: participantsWithPayment, expenses };
+  const settled = Array.isArray(data.settled)
+    ? data.settled.filter((key): key is string => typeof key === 'string')
+    : [];
+
+  return { id, name: data.name, participants: participantsWithPayment, expenses, settled };
 };
 
 export const getRoom = async (roomId: string): Promise<Room | null> => {
@@ -163,6 +167,12 @@ export const addExpense = async (
   });
 
   return expense;
+};
+
+export const setDebtSettled = async (roomId: string, key: string, paid: boolean): Promise<void> => {
+  await updateDoc(doc(getDb(), ROOMS_COLLECTION, roomId), {
+    settled: paid ? arrayUnion(key) : arrayRemove(key)
+  });
 };
 
 export const removeExpense = async (roomId: string, expense: Expense): Promise<void> => {

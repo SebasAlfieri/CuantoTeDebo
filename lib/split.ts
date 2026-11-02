@@ -106,6 +106,10 @@ export const calculateOptimizedTransactions = <T extends { amount: number }>(
   return { transactions, totalPerPerson };
 };
 
+// Incluye el monto: si cambian los gastos y la deuda cambia, la marca de "pagado" deja de aplicar.
+export const getDebtKey = (debtorId: string, creditorId: string, amount: number): string =>
+  `${debtorId}_${creditorId}_${Math.round(amount * 100)}`;
+
 export const pickColor = (usedColors: string[]): string => {
   const available = PERSON_COLORS.filter((color) => !usedColors.includes(color));
   const pool = available.length > 0 ? available : PERSON_COLORS;

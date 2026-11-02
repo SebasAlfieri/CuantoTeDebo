@@ -116,6 +116,7 @@ const Calc = () => {
       setData((prev) =>
         prev
           ? {
+              ...prev,
               participants: prev.participants.filter((p) => p.id !== participant.id),
               expenses: prev.expenses.filter((e) => e.participantId !== participant.id)
             }
@@ -129,6 +130,18 @@ const Calc = () => {
     removeExpense: async (expense) => {
       setData((prev) =>
         prev ? { ...prev, expenses: prev.expenses.filter((e) => e.id !== expense.id) } : prev
+      );
+    },
+    setSettled: async (debtKey, paid) => {
+      setData((prev) =>
+        prev
+          ? {
+              ...prev,
+              settled: paid
+                ? [...prev.settled, debtKey]
+                : prev.settled.filter((key) => key !== debtKey)
+            }
+          : prev
       );
     },
     setPaymentInfo: async (participant, value) => {
@@ -151,6 +164,7 @@ const Calc = () => {
       title="¿Cuánto Te Debo?"
       participants={data.participants}
       expenses={data.expenses}
+      settled={data.settled}
       actions={actions}
       storageScope="solo"
       intro={

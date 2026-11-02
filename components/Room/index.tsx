@@ -11,6 +11,7 @@ import {
   getRoom,
   removeExpense,
   removeParticipant,
+  setDebtSettled,
   setPaymentInfo
 } from '@/lib/rooms';
 import type { Room as RoomData } from '@/types/room';
@@ -173,6 +174,20 @@ const Room = ({ roomId }: RoomProps) => {
         prev ? { ...prev, expenses: prev.expenses.filter((e) => e.id !== expense.id) } : prev
       );
     },
+    setSettled: async (debtKey, paid) => {
+      cancelPendingLoads();
+      await setDebtSettled(room.id, debtKey, paid);
+      setRoom((prev) =>
+        prev
+          ? {
+              ...prev,
+              settled: paid
+                ? [...prev.settled, debtKey]
+                : prev.settled.filter((key) => key !== debtKey)
+            }
+          : prev
+      );
+    },
     setPaymentInfo: async (participant, value) => {
       cancelPendingLoads();
       const paymentInfo = await setPaymentInfo(room.id, participant.id, value);
@@ -195,6 +210,7 @@ const Room = ({ roomId }: RoomProps) => {
       title={room.name}
       participants={room.participants}
       expenses={room.expenses}
+      settled={room.settled}
       actions={actions}
       storageScope={room.id}
       intro={
