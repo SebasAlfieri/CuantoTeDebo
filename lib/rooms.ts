@@ -26,6 +26,10 @@ import {
 
 // Toda la sala vive en un único documento: 1 lectura por carga (plan Spark).
 const ROOMS_COLLECTION = 'rooms';
+
+// Cada escritura marca la última actividad; la limpieza automática borra las salas
+// que pasan 7 días sin cambios (ver lib/room-cleanup.ts). Las lecturas no lo tocan.
+const touch = () => ({ lastActivityAt: serverTimestamp() });
 const ROOM_ID_PATTERN = /^[A-Za-z0-9]{20}$/;
 
 export const ROOM_NAME_MAX_LENGTH = 40;
@@ -93,6 +97,7 @@ export const createRoom = async (
   await setDoc(ref, {
     name: normalizeName(roomName).slice(0, ROOM_NAME_MAX_LENGTH),
     createdAt: serverTimestamp(),
+    ...touch(),
     participants: [creator],
     expenses: []
   });
@@ -108,7 +113,8 @@ export const addParticipant = async (room: Room, name: string): Promise<Particip
   };
 
   await updateDoc(doc(getDb(), ROOMS_COLLECTION, room.id), {
-    participants: arrayUnion(participant)
+    participants: arrayUnion(participant),
+    ...touch()
   });
 
   return participant;
@@ -125,7 +131,8 @@ export const removeParticipant = async (room: Room, participant: Participant): P
       color: participant.color
     }),
     ...(expenses.length > 0 && { expenses: arrayRemove(...expenses.map(toStoredExpense)) }),
-    [`payments.${participant.id}`]: deleteField()
+    [`payments.${participant.id}`]: deleteField(),
+    ...touch()
   });
 };
 
@@ -142,7 +149,8 @@ export const setPaymentInfo = async (
   }
 
   await updateDoc(doc(getDb(), ROOMS_COLLECTION, roomId), {
-    [`payments.${participantId}`]: normalized || deleteField()
+    [`payments.${participantId}`]: normalized || deleteField(),
+    ...touch()
   });
 
   return normalized || undefined;
@@ -163,7 +171,8 @@ export const addExpense = async (
   };
 
   await updateDoc(doc(getDb(), ROOMS_COLLECTION, roomId), {
-    expenses: arrayUnion(expense)
+    expenses: arrayUnion(expense),
+    ...touch()
   });
 
   return expense;
@@ -171,12 +180,14 @@ export const addExpense = async (
 
 export const setDebtSettled = async (roomId: string, key: string, paid: boolean): Promise<void> => {
   await updateDoc(doc(getDb(), ROOMS_COLLECTION, roomId), {
-    settled: paid ? arrayUnion(key) : arrayRemove(key)
+    settled: paid ? arrayUnion(key) : arrayRemove(key),
+    ...touch()
   });
 };
 
 export const removeExpense = async (roomId: string, expense: Expense): Promise<void> => {
   await updateDoc(doc(getDb(), ROOMS_COLLECTION, roomId), {
-    expenses: arrayRemove(toStoredExpense(expense))
+    expenses: arrayRemove(toStoredExpense(expense)),
+    ...touch()
   });
 };

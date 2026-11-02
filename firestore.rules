@@ -18,12 +18,20 @@ service cloud.firestore {
           && (!('settled' in data) || (data.settled is list && data.settled.size() <= 300));
       }
 
+      // lastActivityAt solo puede ser la hora del servidor (serverTimestamp) de esa misma escritura,
+      // así nadie puede "estirar" la vida de una sala con una fecha falsa. Es opcional para no
+      // romper pestañas abiertas con la versión anterior de la app.
+      function hasValidActivity(keys) {
+        return !('lastActivityAt' in keys) || request.resource.data.lastActivityAt == request.time;
+      }
+
       // Solo lectura por ID: nadie puede listar todas las salas.
       allow get: if isValidId();
       allow list: if false;
 
       allow create: if isValidId()
-        && request.resource.data.keys().hasOnly(['name', 'createdAt', 'participants', 'expenses'])
+        && request.resource.data.keys().hasOnly(['name', 'createdAt', 'lastActivityAt', 'participants', 'expenses'])
+        && hasValidActivity(request.resource.data.keys())
         && request.resource.data.name is string
         && request.resource.data.name.size() > 0
         && request.resource.data.name.size() <= 40
@@ -32,12 +40,14 @@ service cloud.firestore {
         && request.resource.data.participants.size() == 1
         && request.resource.data.expenses.size() == 0;
 
-      // Solo se pueden modificar participantes, gastos, datos de cobro (CBU/CVU/alias) y deudas pagadas;
-      // el nombre y la fecha quedan fijos.
+      // Solo se pueden modificar participantes, gastos, datos de cobro (CBU/CVU/alias), deudas pagadas
+      // y la marca de actividad; el nombre y la fecha de creación quedan fijos.
       allow update: if isValidId()
-        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participants', 'expenses', 'payments', 'settled'])
+        && request.resource.data.diff(resource.data).affectedKeys().hasOnly(['participants', 'expenses', 'payments', 'settled', 'lastActivityAt'])
+        && hasValidActivity(request.resource.data.diff(resource.data).affectedKeys())
         && hasValidLists(request.resource.data);
 
+      // Los clientes no borran salas: lo hace la limpieza automática desde el servidor (Admin SDK).
       allow delete: if false;
     }
 
